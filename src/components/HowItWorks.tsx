@@ -1,135 +1,92 @@
 import { motion } from 'framer-motion';
-import { ArrowUpRightIcon } from 'lucide-react';
-import type { Step } from '../types/steps';
+import { ArrowRightIcon } from 'lucide-react';
 import { steps } from '../data/steps';
-
-type StepCardProps = {
-  step: Step;
-  index: number;
-};
-
-function StepCard({ step, index }: StepCardProps) {
-  const Icon = step.icon;
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{
-        duration: 0.55,
-        delay: index * 0.12,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{ y: -14 }}
-      className="group relative isolate mx-auto max-w-[400px]"
-    >
-      {/* Colored light source */}
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        aria-hidden="true"
-      >
-        <div
-          className="absolute -left-6 -top-10 h-56 w-56 rounded-full blur-2xl transition-all duration-700 ease-out group-hover:scale-125 group-hover:opacity-100"
-          style={{ backgroundColor: step.glowFrom, opacity: 0.85 }}
-        />
-
-        <div
-          className="absolute -bottom-12 -right-8 h-64 w-64 rounded-full blur-2xl transition-all duration-700 ease-out group-hover:scale-125 group-hover:opacity-100"
-          style={{ backgroundColor: step.glowTo, opacity: 0.85 }}
-        />
-      </div>
-
-      {/* Glass card */}
-      <div className="relative flex min-h-[280px] flex-col overflow-hidden rounded-[28px] border border-white/50 bg-white/20 p-7 shadow-glass backdrop-blur-2xl transition-all duration-500 group-hover:shadow-glass-hover">
-        {/* Shine effect */}
-        <div
-          className="pointer-events-none absolute -left-1/3 top-0 h-full w-1/2 -translate-x-full rotate-12 bg-white/25 blur-2xl transition-transform duration-700 ease-out group-hover:translate-x-[280%]"
-          aria-hidden="true"
-        />
-
-        <div className="relative flex items-start justify-between">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/50 bg-white/25 text-neutral-900 shadow-sm backdrop-blur-md transition-transform duration-500 ease-out group-hover:-rotate-6 group-hover:scale-105">
-            <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
-          </span>
-
-          <span className="text-sm font-semibold tabular-nums tracking-widest text-neutral-900/50">
-            {step.number}
-          </span>
-        </div>
-
-        <div className="relative mt-6">
-          <h3 className="text-2xl font-extrabold tracking-tight text-neutral-900">
-            {step.title}
-          </h3>
-
-          <p className="mt-2 max-w-[34ch] text-[15px] leading-relaxed text-neutral-900/70">
-            {step.description}
-          </p>
-
-          {/* Expands downward on hover */}
-          <div
-            className="
-              overflow-hidden
-              max-h-0
-              opacity-0
-              transition-all
-              duration-500
-              ease-out
-              group-hover:mt-4
-              group-hover:max-h-24
-              group-hover:opacity-100
-            "
-          >
-            <p className="text-[13px] font-medium leading-relaxed text-neutral-900/60">
-              {step.detail}
-            </p>
-          </div>
-
-          <div className="mt-6 flex items-center gap-1 text-sm font-semibold text-neutral-900/70 transition-colors duration-300 group-hover:text-neutral-900">
-            <span>ნაბიჯი {Number(step.number)} / 3</span>
-
-            <ArrowUpRightIcon
-              className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:-translate-y-1"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
 
 export function HowItWorks() {
   return (
-    <section
-      id="howitworks"
-      className="mx-auto max-w-6xl px-4 py-24">
-      {/* Section Header */}
-      <div className="mb-16 text-center">
-        <h2
-          style={{ fontFamily: 'BPG Rioni' }}
-          className="text-[clamp(2.2rem,5vw,4rem)] font-bold tracking-tight text-neutral-900"
-        >
-          როგორ მუშაობს
-        </h2>
+    <section id="howitworks" className="px-5 py-20 sm:px-8 sm:py-28">
+      <div className="mx-auto max-w-6xl">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-black/40">
+            მარტივი პროცესი
+          </p>
+          <h2 className="mt-3 text-4xl font-bold tracking-[-0.04em] text-ink sm:whitespace-nowrap sm:text-6xl">
+            როგორ მუშაობს
+          </h2>
+        </div>
 
-        <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-neutral-600">
-          აირჩიე პაკეტი, გამოგზავნე დიზაინის მოთხოვნა და მიიღე
-          პროფესიონალური შედეგი სწრაფად და მარტივად.
-        </p>
-      </div>
-
-      {/* Cards */}
-      <div className="grid justify-center gap-24 md:grid-cols-[260px_260px_260px]">
-        {steps.map((step, index) => (
-          <StepCard
-            key={step.number}
-            step={step}
-            index={index}
+        <div className="relative mt-12 sm:mt-16">
+          <div
+            aria-hidden="true"
+            className="absolute left-[12%] right-[12%] top-9 hidden h-px bg-black/10 lg:block"
           />
-        ))}
+
+          <ol className="grid gap-5 lg:grid-cols-3 lg:gap-6">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+
+              return (
+                <motion.li
+                  key={step.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{
+                    duration: 0.55,
+                    delay: index * 0.1,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="group relative flex h-full flex-col"
+                >
+                  <div className="relative z-10 mb-5 flex items-center justify-center">
+                    <span className="flex h-[72px] w-[72px] items-center justify-center rounded-full border border-black/[0.08] bg-canvas shadow-[0_8px_24px_-16px_rgba(0,0,0,0.35)]">
+                      <span
+                        className="flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-105"
+                        style={{
+                          background: `linear-gradient(135deg, ${step.glowFrom}, ${step.glowTo})`,
+                        }}
+                      >
+                        <Icon className="h-5 w-5 text-ink" strokeWidth={1.8} aria-hidden="true" />
+                      </span>
+                    </span>
+                    <span className="absolute right-0 text-xs font-semibold tracking-[0.16em] text-black/30 lg:hidden">
+                      {step.number}
+                    </span>
+                  </div>
+
+                  <article className="relative flex h-[380px] flex-none flex-col overflow-hidden rounded-[24px] border border-black/[0.07] bg-white/65 p-6 shadow-[0_20px_55px_-40px_rgba(0,0,0,0.4)] backdrop-blur transition-all duration-300 group-hover:-translate-y-1.5 group-hover:bg-white group-hover:shadow-[0_28px_60px_-38px_rgba(0,0,0,0.45)] sm:h-[350px] sm:p-7 lg:h-[340px]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-black/35">
+                        ნაბიჯი {index + 1}
+                      </span>
+                      <span className="text-sm font-semibold text-black/25">
+                        {step.number}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-8 text-2xl font-bold tracking-[-0.025em] text-ink">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 text-[15px] leading-relaxed text-black/55">
+                      {step.description}
+                    </p>
+                    <p className="mt-5 border-t border-black/[0.07] pt-5 text-[13px] leading-relaxed text-black/40">
+                      {step.detail}
+                    </p>
+
+                    {index < steps.length - 1 && (
+                      <span className="absolute bottom-6 right-6 flex h-9 w-9 items-center justify-center rounded-full bg-black/[0.04] text-black/35 transition-all duration-300 group-hover:translate-x-1 group-hover:bg-ink group-hover:text-white lg:hidden">
+                        <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                    )}
+                  </article>
+                </motion.li>
+              );
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   );
 }
+

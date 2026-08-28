@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { PlusIcon } from 'lucide-react';
 import { faqItems } from '../data/faq';
@@ -88,3 +88,4 @@ export function Faq() {
     </section>
   );
 }
+

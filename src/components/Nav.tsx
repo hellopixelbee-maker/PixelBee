@@ -1,5 +1,3 @@
-import React from 'react';
-
 const links = [
   {
     label: 'როგორ მუშაობს',
@@ -56,3 +54,4 @@ export function Nav() {
     </header>
   );
 }
+
