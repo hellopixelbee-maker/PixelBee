@@ -57,10 +57,10 @@ export function Pricing() {
               </div>
 
               <a
-                href="#work"
+                href="#contact"
                 className="group mt-10 inline-flex w-full items-center justify-between rounded-full bg-white px-6 py-4 text-[15px] font-semibold text-ink transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:mt-auto"
               >
-                ნამუშევრების ნახვა
+                დაგვიკავშირდი
                 <ArrowUpRightIcon
                   className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   aria-hidden="true"
@@ -107,4 +107,3 @@ export function Pricing() {
     </section>
   );
 }
-
