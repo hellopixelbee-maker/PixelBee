@@ -129,7 +129,7 @@ export function WhatYouGet() {
           className="mt-12 flex flex-col items-center gap-4"
         >
           <motion.a
-            href="#start"
+            href="#contact"
             whileHover={{ y: -3 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white"

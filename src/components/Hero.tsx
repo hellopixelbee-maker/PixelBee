@@ -15,6 +15,7 @@ export function Hero() {
 
   return (
     <section
+      id="top"
       ref={sectionRef}
       aria-labelledby="team-hero-heading"
       className="relative w-full overflow-hidden bg-cream px-4 pb-10 pt-14 sm:px-8 sm:pt-20"
