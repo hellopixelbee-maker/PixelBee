@@ -1,7 +1,5 @@
 import { motion } from 'framer-motion';
-import {
-  SparklesIcon,
-} from 'lucide-react';
+import { InfinityIcon, PauseIcon, SparklesIcon } from 'lucide-react';
 import { deliverables } from '../data/deliverables';
 
 export function WhatYouGet() {
@@ -10,10 +8,9 @@ export function WhatYouGet() {
   return (
     <section
       aria-labelledby="deliverables-heading"
-      className="relative w-full overflow-hidden bg-canvas px-5 py-20 sm:px-8 sm:py-28"
+      className="relative w-full overflow-hidden px-5 py-20 sm:px-8 sm:py-28"
     >
-
-
+      <div aria-hidden="true" className="section-glow -right-56 top-20 bg-cyan-400/10" />
       <div className="relative mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -22,7 +19,7 @@ export function WhatYouGet() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center text-center"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/50 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60 shadow-glass backdrop-blur-xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent shadow-glow backdrop-blur-xl">
             <SparklesIcon className="h-3.5 w-3.5" aria-hidden="true" />
             ერთი პაკეტი
           </span>
@@ -40,8 +37,7 @@ export function WhatYouGet() {
           </p>
         </motion.div>
 
-        {/* MAIN GRID */}
-        <ul className="mt-12 grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+        <ul className="mt-12 flex flex-wrap justify-center gap-3.5 sm:gap-4">
           {regularDeliverables.map((item, i) => (
             <motion.li
               key={item.label}
@@ -53,6 +49,7 @@ export function WhatYouGet() {
                 delay: i * 0.05,
                 ease: [0.22, 1, 0.36, 1]
               }}
+              className="w-fit max-w-full"
             >
               <motion.div
                 whileHover={{ y: -6, scale: 1.02 }}
@@ -62,11 +59,11 @@ export function WhatYouGet() {
                   stiffness: 380,
                   damping: 26
                 }}
-                className="group relative h-full overflow-hidden rounded-2xl border border-white/60 bg-white/45 p-4 shadow-glass backdrop-blur-2xl transition-colors duration-300 hover:border-white/90 hover:bg-white/70 hover:shadow-glass-hover sm:p-5"
+                className="glass-panel glass-panel-hover group relative overflow-hidden rounded-2xl px-5 py-4 sm:px-6"
               >
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/50 opacity-0 blur-md transition-all duration-700 group-hover:left-[110%] group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-white/20 opacity-0 blur-md transition-all duration-700 group-hover:left-[110%] group-hover:opacity-100"
                 />
 
                 <div className="relative">
@@ -75,7 +72,7 @@ export function WhatYouGet() {
                       {item.label}
                     </span>
 
-                    <span className="mt-1 block text-[13px] leading-snug text-ink/50">
+                    <span className="mt-1 block text-[13px] leading-snug text-ink/45">
                       {item.note}
                     </span>
                   </span>
@@ -85,40 +82,77 @@ export function WhatYouGet() {
           ))}
         </ul>
 
-                {/* SPECIAL CARDS */}
-        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="rounded-[28px] border border-dashed border-black/10 bg-[#f7f3f4] p-8"
-          >
-            <h3 className="text-2xl font-medium text-ink">
-              უსასრულო რევიზია
-            </h3>
+        <div className="benefits-shell relative mt-16 overflow-hidden rounded-[30px] border p-4 backdrop-blur-xl sm:mt-20 sm:rounded-[34px] sm:p-6">
+          <span
+            aria-hidden="true"
+            className="absolute -left-24 top-1/2 h-56 w-56 -translate-y-1/2 rounded-full bg-accent/10 blur-[80px]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -right-24 top-1/2 h-56 w-56 -translate-y-1/2 rounded-full bg-brandviolet/10 blur-[80px]"
+          />
 
-            <p className="mt-3 text-base leading-relaxed text-ink/55">
-              ვამუშავებთ დიზაინს მანამ, სანამ შედეგი სრულად არ
-              დააკმაყოფილებს თქვენს მოლოდინს.
-            </p>
-          </motion.div>
+          <div className="relative mb-5 flex items-center gap-4 px-2 sm:mb-6">
+            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/50">
+              მოქნილი პირობები
+            </span>
+            <span className="h-px flex-1 bg-gradient-to-r from-ink/20 to-transparent" />
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="rounded-[28px] border border-dashed border-black/10 bg-[#f7f3f4] p-8"
-          >
-            <h3 className="text-2xl font-medium text-ink">
-              პაუზის შესაძლებლობა
-            </h3>
+          <div className="relative grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -4 }}
+              viewport={{ once: true }}
+              className="group relative overflow-hidden rounded-[24px] border border-accent/20 bg-gradient-to-br from-white/[0.11] via-white/[0.055] to-accent/[0.055] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.13)] transition-colors hover:border-accent/35 sm:p-7"
+            >
+              <span className="absolute right-5 top-4 text-xs font-semibold tracking-[0.16em] text-ink/20">
+                01
+              </span>
+              <div className="flex items-start gap-4 sm:gap-5">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-ink/15 bg-ink/[0.055] text-accent shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_30px_-18px_rgba(110,153,255,0.8)] backdrop-blur-xl transition-transform group-hover:scale-105">
+                  <InfinityIcon className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 pt-0.5">
+                  <h3 className="text-xl font-semibold text-ink sm:text-2xl">
+                    უსასრულო რევიზია
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink/55 sm:text-base">
+                    ვამუშავებთ დიზაინს მანამ, სანამ შედეგი სრულად არ
+                    დააკმაყოფილებს თქვენს მოლოდინს.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
 
-            <p className="mt-3 text-base leading-relaxed text-ink/55">
-              საჭიროების შემთხვევაში შეგიძლიათ მომსახურება
-              ნებისმიერ დროს შეაჩეროთ დამატებითი პირობების გარეშე.
-            </p>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -4 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="group relative overflow-hidden rounded-[24px] border border-brandviolet/20 bg-gradient-to-br from-white/[0.11] via-white/[0.055] to-brandviolet/[0.055] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.13)] transition-colors hover:border-brandviolet/35 sm:p-7"
+            >
+              <span className="absolute right-5 top-4 text-xs font-semibold tracking-[0.16em] text-ink/20">
+                02
+              </span>
+              <div className="flex items-start gap-4 sm:gap-5">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-ink/15 bg-ink/[0.055] text-brandviolet shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_30px_-18px_rgba(139,124,255,0.8)] backdrop-blur-xl transition-transform group-hover:scale-105">
+                  <PauseIcon className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 pt-0.5">
+                  <h3 className="text-xl font-semibold text-ink sm:text-2xl">
+                    პაუზის შესაძლებლობა
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink/55 sm:text-base">
+                    საჭიროების შემთხვევაში შეგიძლიათ მომსახურება
+                    ნებისმიერ დროს შეაჩეროთ დამატებითი პირობების გარეშე.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         <motion.div
@@ -132,12 +166,12 @@ export function WhatYouGet() {
             href="#contact"
             whileHover={{ y: -3 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-gradient-to-r from-[#6f9fff] to-[#8b7cff] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_16px_38px_-16px_rgba(111,159,255,0.75)]"
           >
             დაიწყე დღესვე
           </motion.a>
 
-          <p className="text-xs text-ink/45">
+          <p className="text-xs text-ink/40">
             ყველა მომსახურება შედის ერთ ფასში.
           </p>
         </motion.div>

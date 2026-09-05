@@ -18,9 +18,15 @@ export function Hero() {
       id="top"
       ref={sectionRef}
       aria-labelledby="team-hero-heading"
-      className="relative w-full overflow-hidden bg-cream px-4 pb-10 pt-14 sm:px-8 sm:pt-20"
+      className="relative isolate w-full scroll-mt-20 px-4 pb-16 pt-8 sm:px-8 sm:pb-24 sm:pt-10"
     >
-      <div className="mx-auto max-w-6xl">
+      <div
+        aria-hidden="true"
+        className="mesh-hero hero-mesh pointer-events-none absolute inset-x-0 -bottom-32 -top-24 -z-10"
+      />
+      <div aria-hidden="true" className="section-glow -left-52 top-8" />
+      <div aria-hidden="true" className="section-glow -right-56 top-20 bg-violet-500/15" />
+      <div className="relative z-10 mx-auto max-w-6xl">
         <div className="relative text-center">
           <motion.h1
             id="team-hero-heading"
@@ -43,7 +49,7 @@ export function Hero() {
               ease: [0.16, 1, 0.3, 1],
             }}
             style={{ fontFamily: 'BPG Rioni' }}
-            className="pointer-events-none relative z-0 -mt-[-0.1em] block select-none whitespace-nowrap text-[clamp(2rem,11vw,10rem)] font-bold italic leading-[0.9] tracking-[-0.045em] text-gray-400"
+            className="text-gradient pointer-events-none relative z-0 -mt-[-0.1em] block select-none whitespace-nowrap px-2 pb-[0.14em] text-[clamp(2rem,10.5vw,9rem)] font-bold italic leading-[1.16] tracking-[-0.04em] opacity-90 sm:px-4"
           >
             ულიმიტო დიზაინი
           </motion.span>
@@ -72,7 +78,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.85 }}
-          className="mt-8 text-center text-[11px] font-medium tracking-[-0.01em] text-[#a89c86] sm:text-xs"
+          className="mx-auto mt-[4.75rem] w-fit rounded-full border border-ink/10 bg-ink/[0.05] px-4 py-2 text-center text-[11px] font-medium tracking-[-0.01em] text-ink/50 backdrop-blur-xl sm:text-xs"
         >
           გამოწერის დაპაუზება ან გაუქმება შეგიძლიათ ნებისმიერ დროს
         </motion.p>

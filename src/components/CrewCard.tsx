@@ -1,8 +1,4 @@
-import {
-  motion,
-  useTransform,
-  type MotionValue,
-} from 'framer-motion';
+import { motion, useTransform, type MotionValue } from 'framer-motion';
 import type { CrewMember } from '../data/crew';
 
 type CrewCardProps = {
@@ -20,16 +16,7 @@ export function CrewCard({
   onHoverChange,
   scrollYProgress,
 }: CrewCardProps) {
-  const {
-    name,
-    role,
-    image,
-    rotate,
-    offsetY,
-    overlap,
-    z,
-    featured,
-  } = member;
+  const { name, role, image, rotate, offsetY, overlap, z, featured } = member;
 
   const drift = featured ? 10 : 7 + (index % 3) * 2;
   const duration = 4.6 + (index % 4) * 0.7;
@@ -41,33 +28,21 @@ export function CrewCard({
   if (hoveredIndex !== null && !isHovered) {
     const distance = index - hoveredIndex;
 
-    const magnitude = Math.max(
-      0,
-      20 - (Math.abs(distance) - 1) * 7
-    );
+    const magnitude = Math.max(0, 20 - (Math.abs(distance) - 1) * 7);
 
     shiftX = Math.sign(distance) * magnitude;
   }
 
-  // Scroll spread effect
-const spreadOffsets = [-180, -130, -80, -30, 30, 80, 130, 180];
+  const spreadOffsets = [-180, -130, -80, -30, 30, 80, 130, 180];
   const spreadX = useTransform(
     scrollYProgress,
     [0, 1],
     [0, spreadOffsets[index] ?? 0]
   );
 
-  const scrollOpacity = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [1, 0.25]
-  );
+  const scrollOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.25]);
 
-  const scrollScale = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [1, 1.5]
-  );
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 1.5]);
 
   const scrollRotate = useTransform(
     scrollYProgress,
@@ -162,7 +137,7 @@ const spreadOffsets = [-180, -130, -80, -30, 30, 80, 130, 180];
                 damping: 18,
                 mass: 0.6,
               }}
-              className="group relative w-full cursor-pointer overflow-hidden rounded-[22px] bg-white shadow-[0_18px_40px_-18px_rgba(120,84,60,0.45)] ring-1 ring-black/5 transition-shadow duration-300 hover:shadow-[0_34px_60px_-22px_rgba(120,84,60,0.6)]"
+              className="group relative w-full cursor-pointer overflow-hidden rounded-[22px] border border-ink/20 bg-ink/[0.08] shadow-[0_22px_55px_-22px_rgba(0,0,0,0.85)] ring-1 ring-ink/10 backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_35px_75px_-24px_rgba(92,125,255,0.48)]"
               style={{ aspectRatio: '3 / 4' }}
             >
               <img

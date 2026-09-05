@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react';
 import { portfolioItems, type PortfolioItem } from '../data/portfolio';
 
 export function Portfolio() {
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+  const selectedIndex = selectedItem
+    ? portfolioItems.findIndex((item) => item.id === selectedItem.id)
+    : -1;
 
   const moveCategory = (direction: 1 | -1) => {
     setSelectedItem((current) => {
@@ -54,11 +58,12 @@ export function Portfolio() {
       <section
         id="work"
         aria-labelledby="portfolio-heading"
-        className="overflow-hidden px-5 py-20 sm:px-8 sm:py-28"
+        className="relative overflow-hidden px-5 py-20 sm:px-8 sm:py-28"
       >
-        <div className="mx-auto w-full max-w-6xl">
+        <div aria-hidden="true" className="section-glow -left-60 top-32 bg-violet-500/15" />
+        <div className="relative mx-auto w-full max-w-6xl">
         <div className="max-w-2xl">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-black/40">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-accent/80">
             ჩვენი მიმართულებები
           </p>
           <h2
@@ -67,7 +72,7 @@ export function Portfolio() {
           >
             გადახედე ნამუშევრებს
           </h2>
-          <p className="mt-3 text-black/55 sm:text-lg">
+          <p className="mt-3 text-ink/55 sm:text-lg">
             აირჩიე კატეგორია და დაათვალიერე შესაბამის საქაღალდეში თავმოყრილი პროექტები.
           </p>
         </div>
@@ -89,10 +94,10 @@ export function Portfolio() {
                 type="button"
                 onClick={() => setSelectedItem(item)}
                 aria-haspopup="dialog"
-                className="group mx-auto block w-full max-w-[205px] rounded-[20px] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+                className="group mx-auto block w-full max-w-[205px] rounded-[20px] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
               >
                 <div className="relative h-[132px] sm:h-[142px]">
-                  <div className="absolute inset-x-2 top-0 z-10 h-[78px] overflow-hidden bg-black/5 transition-transform duration-300 ease-out group-hover:-translate-y-8">
+                  <div className="absolute inset-x-2 top-1 z-10 h-[78px] overflow-hidden rounded-t-xl border border-ink/10 bg-ink/[0.06] shadow-lg transition-transform duration-300 ease-out group-hover:-translate-y-9">
                     <img
                       src={item.image}
                       alt=""
@@ -101,14 +106,14 @@ export function Portfolio() {
                     />
                   </div>
 
-                  <div className="absolute inset-x-0 bottom-0 top-[18px] z-0 rounded-[11px] bg-black" />
-                  <div className="absolute left-0 top-[28px] z-20 h-[32px] w-[58%] rounded-tl-[11px] rounded-tr-[14px] bg-black transition-transform duration-300 group-hover:-translate-y-1" />
-                  <div className="absolute inset-x-0 bottom-0 top-[44px] z-20 rounded-[11px] bg-black shadow-[0_12px_24px_-18px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover:-translate-y-1" />
+                  <div className="portfolio-folder-back absolute inset-x-0 bottom-0 top-[18px] z-0 rounded-[13px] border backdrop-blur-[26px]" />
+                  <div className="portfolio-folder-tab absolute left-0 top-[28px] z-20 h-[32px] w-[58%] rounded-tl-[13px] rounded-tr-[16px] border-l border-t backdrop-blur-[26px] transition-transform duration-300 group-hover:-translate-y-1" />
+                  <div className="portfolio-folder-front absolute inset-x-0 bottom-0 top-[44px] z-20 flex items-center justify-center rounded-[13px] border px-3 py-2 backdrop-blur-[24px] transition-all duration-300 group-hover:-translate-y-1">
+                    <h3 className="text-center text-[12px] font-semibold uppercase leading-[1.3] tracking-[0.055em] text-ink/90 transition-colors group-hover:text-ink sm:text-[14px]">
+                      {item.title.toLocaleUpperCase('ka-GE')}
+                    </h3>
+                  </div>
                 </div>
-
-                <h3 className="mt-3.5 text-center text-[15px] font-semibold leading-snug tracking-[-0.01em] text-ink transition-colors group-hover:text-black/60 sm:text-[17px]">
-                  {item.title}
-                </h3>
               </button>
             </motion.li>
           ))}
@@ -116,10 +121,11 @@ export function Portfolio() {
         </div>
       </section>
 
-      <AnimatePresence>
-        {selectedItem && (
+      {createPortal(
+        <AnimatePresence>
+          {selectedItem && (
           <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/65 p-4 backdrop-blur-sm sm:p-8"
+            className="portfolio-backdrop fixed inset-0 z-[200] flex items-center justify-center p-3 backdrop-blur-2xl sm:p-6 lg:p-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -136,34 +142,24 @@ export function Portfolio() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 18, scale: 0.98 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative max-h-[88vh] w-full max-w-5xl overflow-x-hidden overflow-y-auto rounded-[26px] bg-canvas p-5 shadow-2xl sm:rounded-[32px] sm:p-8"
+              className="portfolio-dialog relative flex max-h-[92dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[24px] border backdrop-blur-2xl sm:rounded-[30px]"
             >
-              <button
-                type="button"
-                onClick={() => moveCategory(-1)}
-                aria-label="Previous portfolio category"
-                className="absolute left-2 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black text-white shadow-lg transition-all hover:-translate-x-1 hover:-translate-y-1/2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black sm:left-4 sm:h-12 sm:w-12"
-              >
-                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-24 -top-32 h-72 w-72 rounded-full bg-accent/15 blur-[90px]"
+              />
 
-              <button
-                type="button"
-                onClick={() => moveCategory(1)}
-                aria-label="Next portfolio category"
-                className="absolute right-2 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black text-white shadow-lg transition-all hover:translate-x-1 hover:-translate-y-1/2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black sm:right-4 sm:h-12 sm:w-12"
-              >
-                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
-
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/35">
-                    ნამუშევრები
+              <header className="relative flex shrink-0 items-start justify-between gap-5 border-b border-ink/[0.09] px-5 py-5 sm:px-8 sm:py-6">
+                <div className="min-w-0">
+                  <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-accent/80 sm:text-xs">
+                    <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_14px_rgba(115,151,255,0.9)]" />
+                    პორტფოლიო&nbsp;&nbsp;·&nbsp;&nbsp;
+                    {String(selectedIndex + 1).padStart(2, '0')} /{' '}
+                    {String(portfolioItems.length).padStart(2, '0')}
                   </p>
                   <h3
                     id="portfolio-dialog-title"
-                    className="mt-2 pr-10 text-2xl font-bold tracking-[-0.025em] text-ink sm:text-4xl"
+                    className="mt-2 text-xl font-bold leading-tight tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl"
                   >
                     {selectedItem.title}
                   </h3>
@@ -172,31 +168,93 @@ export function Portfolio() {
                 <button
                   type="button"
                   onClick={() => setSelectedItem(null)}
-                  aria-label="Close portfolio gallery"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.06] text-ink transition-colors hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+                  aria-label="პორტფოლიოს ფანჯრის დახურვა"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/[0.12] bg-ink/[0.06] text-ink/65 backdrop-blur-xl transition-all hover:rotate-90 hover:border-ink/25 hover:bg-ink/[0.12] hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:h-11 sm:w-11"
                 >
                   <XIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
+              </header>
+
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:p-6 lg:p-8">
+                <div className="relative mx-auto w-full">
+                  <div
+                    className={`grid gap-4 sm:gap-5 ${
+                      selectedItem.gallery.length === 1 ? 'mx-auto max-w-4xl' : 'sm:grid-cols-2'
+                    }`}
+                  >
+                    {selectedItem.gallery.map((image, imageIndex) => (
+                      <figure
+                        key={`${image}-${imageIndex}`}
+                        className={`relative isolate flex items-center justify-center overflow-hidden rounded-[18px] border border-ink/[0.12] bg-ink/[0.035] shadow-[0_24px_70px_-36px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.18)] sm:rounded-[24px] ${
+                          selectedItem.gallery.length === 1 ? 'min-h-[260px]' : ''
+                        }`}
+                      >
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 scale-110 bg-cover bg-center opacity-20 blur-2xl"
+                          style={{ backgroundImage: `url(${image})` }}
+                        />
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-gradient-to-b from-[#050916]/20 via-[#050916]/35 to-[#050916]/60"
+                        />
+                        <img
+                          src={image}
+                          alt={`${selectedItem.title} — ნამუშევარი ${imageIndex + 1}`}
+                          className={`relative z-10 w-full ${
+                            selectedItem.gallery.length === 1
+                              ? 'max-h-[60vh] object-contain'
+                              : 'aspect-[4/3] h-full object-cover'
+                          }`}
+                        />
+                      </figure>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => moveCategory(-1)}
+                    aria-label="წინა პორტფოლიოს კატეგორია"
+                    className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:-translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:left-4 sm:h-12 sm:w-12"
+                  >
+                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => moveCategory(1)}
+                    aria-label="შემდეგი პორტფოლიოს კატეგორია"
+                    className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:right-4 sm:h-12 sm:w-12"
+                  >
+                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
               </div>
 
-              <div className="mt-7 grid gap-4 sm:mt-9 sm:grid-cols-2 sm:gap-5">
-                {selectedItem.gallery.map((image, imageIndex) => (
-                  <figure
-                    key={`${image}-${imageIndex}`}
-                    className="overflow-hidden rounded-[18px] bg-white shadow-[0_18px_45px_-34px_rgba(0,0,0,0.5)] sm:rounded-[22px]"
-                  >
-                    <img
-                      src={image}
-                      alt={`${selectedItem.title} — ნამუშევარი ${imageIndex + 1}`}
-                      className="aspect-[4/3] h-full w-full object-cover"
+              <footer className="relative flex shrink-0 items-center justify-between gap-4 border-t border-ink/[0.09] px-5 py-3 sm:px-8 sm:py-4">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/40 sm:text-xs">
+                  კატეგორია
+                </span>
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  {portfolioItems.map((item, index) => (
+                    <span
+                      key={item.id}
+                      className={`h-1.5 rounded-full transition-all ${
+                        index === selectedIndex ? 'w-6 bg-accent' : 'w-1.5 bg-ink/20'
+                      }`}
                     />
-                  </figure>
-                ))}
-              </div>
+                  ))}
+                </div>
+                <span className="min-w-10 text-right text-xs font-semibold tabular-nums text-ink/55">
+                  {selectedIndex + 1} / {portfolioItems.length}
+                </span>
+              </footer>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </>
   );
 }

@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Pixel Bee — გრაფიკული დიზაინი, ბრენდინგი და ციფრული გამოცდილებები." />
     <title>Pixel Bee — დიზაინი და ბრენდინგი</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('pixel-bee-theme');
+        const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches
+          ? 'light'
+          : 'dark';
+        document.documentElement.dataset.theme = savedTheme || systemTheme;
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

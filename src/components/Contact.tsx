@@ -207,21 +207,22 @@ export function Contact() {
   const contactField = getContactField(values.channel);
 
   const fieldClass = (hasError: boolean) =>
-    `min-h-12 w-full rounded-xl border bg-white px-4 text-[15px] text-ink outline-none transition placeholder:text-black/30 focus:ring-2 focus:ring-ink/15 ${
+    `contact-control min-h-12 w-full rounded-xl border px-4 text-[15px] text-ink outline-none transition placeholder:text-ink/25 focus:ring-2 focus:ring-accent/20 ${
       hasError
-        ? 'border-red-500/70 bg-red-50/50 focus:border-red-600'
-        : 'border-black/10 focus:border-ink/60'
+        ? 'border-red-400/70 bg-red-400/10 focus:border-red-400'
+        : 'border-ink/10 focus:border-accent/60'
     }`;
 
   return (
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="scroll-mt-20 border-t border-black/[0.06] bg-white/30 px-5 py-20 sm:px-8 sm:py-28"
+      className="relative scroll-mt-20 overflow-hidden border-t border-ink/[0.07] px-5 py-20 sm:px-8 sm:py-28"
     >
-      <div className="mx-auto grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
+      <div aria-hidden="true" className="section-glow -left-56 top-24 bg-cyan-400/10" />
+      <div className="relative mx-auto grid w-full max-w-6xl items-start gap-12 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20">
         <div className="lg:sticky lg:top-28">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-black/40">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent/80">
             დაგვიკავშირდით
           </p>
           <h2
@@ -230,7 +231,7 @@ export function Contact() {
           >
             დაგვიტოვეთ საკონტაქტო ინფორმაცია
           </h2>
-          <p className="mt-5 max-w-xl text-[15px] leading-7 text-black/55 sm:text-base">
+          <p className="mt-5 max-w-xl text-[15px] leading-7 text-ink/55 sm:text-base">
             მოკლედ მოგვწერეთ თქვენი ბიზნესისა და დიზაინის საჭიროების შესახებ. თქვენს მოთხოვნას
             გავეცნობით და 24 საათის განმავლობაში თავად დაგიკავშირდებით.
           </p>
@@ -241,8 +242,8 @@ export function Contact() {
 
               return (
                 <li key={benefit.label} className="flex items-center gap-3 text-sm font-medium text-ink/70">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/[0.07] bg-white">
-                    <Icon className="h-[18px] w-[18px] text-ink" strokeWidth={1.8} aria-hidden="true" />
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/10 bg-ink/[0.06] shadow-glow backdrop-blur-xl">
+                    <Icon className="h-[18px] w-[18px] text-accent" strokeWidth={1.8} aria-hidden="true" />
                   </span>
                   <span>{benefit.label}</span>
                 </li>
@@ -251,20 +252,20 @@ export function Contact() {
           </ul>
         </div>
 
-        <div className="rounded-[28px] border border-black/[0.08] bg-white p-5 shadow-[0_30px_75px_-58px_rgba(0,0,0,0.45)] sm:rounded-[32px] sm:p-8 lg:p-10">
+        <div className="glass-panel rounded-[28px] p-5 sm:rounded-[32px] sm:p-8 lg:p-10">
           {status === 'success' ? (
             <div
               role="status"
               aria-live="polite"
               className="flex min-h-[420px] flex-col items-center justify-center text-center"
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-gradient-to-br from-accent to-brandviolet text-white shadow-glow">
                 <CheckCircle2Icon className="h-7 w-7" strokeWidth={1.8} aria-hidden="true" />
               </span>
               <h3 className="mt-6 text-2xl font-bold tracking-[-0.025em] text-ink sm:text-3xl">
                 მადლობა! თქვენი მოთხოვნა მიღებულია.
               </h3>
-              <p className="mt-3 max-w-md text-[15px] leading-7 text-black/55">
+              <p className="mt-3 max-w-md text-[15px] leading-7 text-ink/55">
                 თქვენს შეტყობინებას გავეცნობით და 24 საათის განმავლობაში დაგიკავშირდებით.
               </p>
             </div>
@@ -291,7 +292,7 @@ export function Contact() {
                     className={fieldClass(Boolean(errors.fullName))}
                   />
                   {errors.fullName && (
-                    <p id="contact-full-name-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-700">
+                    <p id="contact-full-name-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-300">
                       {errors.fullName}
                     </p>
                   )}
@@ -317,7 +318,7 @@ export function Contact() {
                     className={fieldClass(Boolean(errors.company))}
                   />
                   {errors.company && (
-                    <p id="contact-company-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-700">
+                    <p id="contact-company-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-300">
                       {errors.company}
                     </p>
                   )}
@@ -347,10 +348,10 @@ export function Contact() {
                         />
                         <label
                           htmlFor={`contact-channel-${option.value}`}
-                          className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold transition peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink ${
+                          className={`flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-xl border px-3 text-sm font-semibold transition peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent ${
                             isSelected
-                              ? 'border-ink bg-ink text-white'
-                              : 'border-black/10 bg-white text-black/55 hover:border-black/25 hover:text-ink'
+                              ? 'border-accent/60 bg-accent/20 text-white shadow-glow'
+                              : 'border-ink/10 bg-ink/[0.04] text-ink/55 hover:border-ink/25 hover:bg-ink/[0.07] hover:text-ink'
                           }`}
                         >
                           {isSelected && <CheckIcon className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />}
@@ -361,7 +362,7 @@ export function Contact() {
                   })}
                 </div>
                 {errors.channel && (
-                  <p id="contact-channel-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-700">
+                  <p id="contact-channel-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-300">
                     {errors.channel}
                   </p>
                 )}
@@ -385,10 +386,10 @@ export function Contact() {
                   placeholder={contactField.placeholder}
                   aria-invalid={Boolean(errors.contact)}
                   aria-describedby={errors.contact ? 'contact-detail-error' : undefined}
-                  className={`${fieldClass(Boolean(errors.contact))} disabled:cursor-not-allowed disabled:bg-black/[0.025] disabled:text-black/35`}
+                  className={`${fieldClass(Boolean(errors.contact))} disabled:cursor-not-allowed disabled:bg-ink/[0.025] disabled:text-ink/25`}
                 />
                 {errors.contact && (
-                  <p id="contact-detail-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-700">
+                  <p id="contact-detail-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-300">
                     {errors.contact}
                   </p>
                 )}
@@ -399,7 +400,7 @@ export function Contact() {
                   <label htmlFor="contact-message" className="block text-sm font-semibold text-ink">
                     რაში შეგვიძლია დაგეხმაროთ?
                   </label>
-                  <span className="text-[11px] text-black/35" aria-live="polite">
+                  <span className="text-[11px] text-ink/35" aria-live="polite">
                     {values.message.length}/1,000
                   </span>
                 </div>
@@ -416,7 +417,7 @@ export function Contact() {
                   className={`${fieldClass(Boolean(errors.message))} min-h-36 max-h-80 resize-y py-3.5`}
                 />
                 {errors.message && (
-                  <p id="contact-message-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-700">
+                  <p id="contact-message-error" role="alert" className="mt-1.5 text-xs leading-5 text-red-300">
                     {errors.message}
                   </p>
                 )}
@@ -435,12 +436,12 @@ export function Contact() {
                 />
               </div>
 
-              <p className="mt-5 text-xs leading-5 text-black/45">
+              <p className="mt-5 text-xs leading-5 text-ink/40">
                 ინფორმაციის გაგზავნით ეთანხმებით, რომ Pixel Bee დაგიკავშირდეთ თქვენს მოთხოვნასთან დაკავშირებით.
               </p>
 
               {status === 'error' && (
-                <p role="alert" aria-live="assertive" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm leading-6 text-red-800">
+                <p role="alert" aria-live="assertive" className="mt-4 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm leading-6 text-red-200">
                   შეტყობინების გაგზავნა ვერ მოხერხდა. გთხოვთ, კიდევ ერთხელ სცადოთ ან დაგვიკავშირდეთ ელფოსტაზე.
                 </p>
               )}
@@ -448,7 +449,7 @@ export function Contact() {
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:translate-y-0 disabled:opacity-65"
+                className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-gradient-to-r from-[#6f9fff] to-[#8b7cff] px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_16px_38px_-16px_rgba(111,159,255,0.75)] transition-all hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-wait disabled:translate-y-0 disabled:opacity-65"
               >
                 {status === 'submitting' ? (
                   <>
