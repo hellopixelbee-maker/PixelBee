@@ -1,6 +1,6 @@
 import { CheckIcon, ArrowUpRightIcon } from 'lucide-react';
 
-const price = 499;
+const price = 1500;
 const durationDays = 30;
 
 const features = [
