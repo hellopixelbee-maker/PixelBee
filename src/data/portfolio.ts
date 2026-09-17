@@ -1,28 +1,127 @@
+export interface PortfolioProject {
+  id: string;
+  title: string;
+  cover: string;
+  gallery: string[];
+  galleryLayout?: 'long-form';
+}
+
 export interface PortfolioItem {
   id: string;
   title: string;
   image: string;
   gallery: string[];
+  galleryLayout?: 'long-form';
+  projects?: PortfolioProject[];
 }
 
 export const portfolioItems: PortfolioItem[] = [
   {
-    id: 'identity-system',
-    title: 'ლოგო და ბრენდირება',
-    image: '/a9193a15-ecb2-4899-bdf9-a4e327c3e211.jpg',
-    gallery: ['/a9193a15-ecb2-4899-bdf9-a4e327c3e211.jpg'],
+    id: 'branding',
+    title: 'ბრენდირება',
+    image: '/behance-darge-cover.png',
+    gallery: [],
+    projects: [
+      {
+        id: 'darge',
+        title: 'DARGE',
+        cover: '/behance-darge-cover.png',
+        gallery: ['/branding-darge.webp'],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'ladybug',
+        title: 'LADYBUG',
+        cover: '/behance-ladybug-cover.png',
+        gallery: ['/branding-ladybug.webp'],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'chai',
+        title: 'ჩაი',
+        cover: '/branding-chai-cover.webp',
+        gallery: ['/branding-chai.webp'],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'unipodcast',
+        title: 'უნი პოდკასტი',
+        cover: '/branding-unipodcast-cover.webp',
+        gallery: ['/branding-unipodcast.webp'],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'skillzy',
+        title: 'SKILLZY',
+        cover: '/branding-skillzy-cover.webp',
+        gallery: ['/branding-skillzy.webp'],
+        galleryLayout: 'long-form',
+      },
+    ],
+  },
+  {
+    id: 'logo-design',
+    title: 'ლოგო',
+    image: '/behance-logofolio-cover.png',
+    gallery: [
+      '/behance-logofolio-01.webp',
+      '/behance-logofolio-02.webp',
+      '/behance-logofolio-03.webp',
+      '/behance-logofolio-04.webp',
+      '/behance-logofolio-05.webp',
+      '/behance-logofolio-06.webp',
+      '/behance-logofolio-07.webp',
+      '/behance-logofolio-08.webp',
+      '/behance-logofolio-09.webp',
+      '/behance-logofolio-10.webp',
+    ],
+    galleryLayout: 'long-form',
   },
   {
     id: 'coffee-packaging',
     title: 'სოციალური მედიის დიზაინი',
-    image: '/0b700aeb-ce72-41ff-a79f-0282fadfc653.jpg',
-    gallery: ['/0b700aeb-ce72-41ff-a79f-0282fadfc653.jpg'],
+    image: '/behance-social-media-cover.png',
+    gallery: ['/social-media-works.webp'],
+    galleryLayout: 'long-form',
   },
   {
     id: 'saas-dashboard',
     title: 'ვებ დიზაინი და UI/UX',
-    image: '/30260434-7798-4a11-a40e-4eae48ddc535.jpg',
-    gallery: ['/30260434-7798-4a11-a40e-4eae48ddc535.jpg'],
+    image: '/behance-georgia-robotics-cover.png',
+    gallery: [],
+    projects: [
+      {
+        id: 'georgia-robotics',
+        title: 'GEORGIA ROBOTICS ASSOCIATION',
+        cover: '/behance-georgia-robotics-cover.png',
+        gallery: [
+          '/behance-georgia-robotics-01.webp',
+          '/behance-georgia-robotics-02.webp',
+          '/behance-georgia-robotics-03.webp',
+          '/behance-georgia-robotics-04.webp',
+          '/behance-georgia-robotics-05.webp',
+          '/behance-georgia-robotics-06.webp',
+        ],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'skillzy-uiux',
+        title: 'SKILLZY',
+        cover: '/behance-skillzy-uiux-cover.png',
+        gallery: [
+          '/behance-skillzy-uiux-01.webp',
+          '/behance-skillzy-uiux-02.webp',
+          '/behance-skillzy-uiux-03.webp',
+          '/behance-skillzy-uiux-04.webp',
+          '/behance-skillzy-uiux-05.webp',
+          '/behance-skillzy-uiux-06.webp',
+          '/behance-skillzy-uiux-07.webp',
+          '/behance-skillzy-uiux-08.webp',
+          '/behance-skillzy-uiux-09.webp',
+        ],
+        galleryLayout: 'long-form',
+      },
+    ],
   },
   {
     id: 'fintech-app',
@@ -33,8 +132,9 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: 'campaign-grid',
     title: 'ელ-ფოსტის დიზაინი',
-    image: '/emailCover.png',
-    gallery: ['/emailCover.png'],
+    image: '/behance-email-designs-cover.png',
+    gallery: ['/behance-email-designs-01.webp'],
+    galleryLayout: 'long-form',
   },
   {
     id: 'story-templates',
@@ -51,8 +151,59 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: 'poster-series',
     title: 'შეფუთვის დიზაინი',
-    image: '/35eaba5e-13a6-4c2f-b8af-09bb4dbadcc7.jpg',
-    gallery: ['/35eaba5e-13a6-4c2f-b8af-09bb4dbadcc7.jpg'],
+    image: '/behance-packaging-design-cover.jpg',
+    gallery: ['/behance-packaging-design-01.webp'],
+    galleryLayout: 'long-form',
+  },
+  {
+    id: 'concept-art',
+    title: 'Concept Art',
+    image: '/behance-host-cover.png',
+    gallery: [],
+    projects: [
+      {
+        id: 'host',
+        title: 'HOST',
+        cover: '/behance-host-cover.png',
+        gallery: ['/behance-host-01.webp'],
+        galleryLayout: 'long-form',
+      },
+      {
+        id: 'daft-punks',
+        title: 'DAFT PUNKS',
+        cover: '/behance-daft-punks-cover.png',
+        gallery: [
+          '/behance-daft-punks-01.webp',
+          '/behance-daft-punks-02.webp',
+          '/behance-daft-punks-03.webp',
+          '/behance-daft-punks-04.webp',
+        ],
+        galleryLayout: 'long-form',
+      },
+    ],
+  },
+  {
+    id: 'fonts',
+    title: 'ფონტები',
+    image: '/behance-abja-font-cover.png',
+    gallery: [],
+    projects: [
+      {
+        id: 'abja-display-typeface',
+        title: 'ABJA',
+        cover: '/behance-abja-font-cover.png',
+        gallery: [
+          '/behance-abja-font-01.webp',
+          '/behance-abja-font-02.webp',
+          '/behance-abja-font-03.webp',
+          '/behance-abja-font-04.webp',
+          '/behance-abja-font-05.webp',
+          '/behance-abja-font-06.webp',
+          '/behance-abja-font-07.webp',
+        ],
+        galleryLayout: 'long-form',
+      },
+    ],
   },
 ];
 

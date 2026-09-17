@@ -2,15 +2,24 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react';
-import { portfolioItems, type PortfolioItem } from '../data/portfolio';
+import {
+  portfolioItems,
+  type PortfolioItem,
+  type PortfolioProject,
+} from '../data/portfolio';
 
 export function Portfolio() {
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
   const selectedIndex = selectedItem
     ? portfolioItems.findIndex((item) => item.id === selectedItem.id)
     : -1;
+  const activeGallery = selectedProject?.gallery ?? selectedItem?.gallery ?? [];
+  const activeGalleryLayout =
+    selectedProject?.galleryLayout ?? selectedItem?.galleryLayout;
 
   const moveCategory = (direction: 1 | -1) => {
+    setSelectedProject(null);
     setSelectedItem((current) => {
       if (!current) return null;
       const currentIndex = portfolioItems.findIndex((item) => item.id === current.id);
@@ -24,8 +33,24 @@ export function Portfolio() {
     if (!selectedItem) return;
 
     const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSelectedItem(null);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedItem]);
+
+  useEffect(() => {
+    if (!selectedItem) return;
+
+    const handlePortfolioKeys = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (selectedProject) setSelectedProject(null);
+        else setSelectedItem(null);
+      }
+
+      if (selectedProject) return;
+
       if (event.key === 'ArrowLeft') {
         setSelectedItem((current) => {
           if (!current) return null;
@@ -44,14 +69,12 @@ export function Portfolio() {
       }
     };
 
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('keydown', handlePortfolioKeys);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('keydown', handlePortfolioKeys);
     };
-  }, [selectedItem]);
+  }, [selectedItem, selectedProject]);
 
   return (
     <>
@@ -92,7 +115,10 @@ export function Portfolio() {
             >
               <button
                 type="button"
-                onClick={() => setSelectedItem(item)}
+                onClick={() => {
+                  setSelectedItem(item);
+                  setSelectedProject(null);
+                }}
                 aria-haspopup="dialog"
                 className="group mx-auto block w-full max-w-[205px] rounded-[20px] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
               >
@@ -131,7 +157,10 @@ export function Portfolio() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
             onMouseDown={(event) => {
-              if (event.target === event.currentTarget) setSelectedItem(null);
+              if (event.target === event.currentTarget) {
+                setSelectedItem(null);
+                setSelectedProject(null);
+              }
             }}
           >
             <motion.div
@@ -161,13 +190,26 @@ export function Portfolio() {
                     id="portfolio-dialog-title"
                     className="mt-2 text-xl font-bold leading-tight tracking-[-0.025em] text-ink sm:text-3xl lg:text-4xl"
                   >
-                    {selectedItem.title}
+                    {selectedProject?.title ?? selectedItem.title}
                   </h3>
+                  {selectedProject && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProject(null)}
+                      className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/[0.12] bg-ink/[0.05] px-3 text-xs font-semibold text-ink/65 transition-colors hover:border-accent/40 hover:bg-accent/10 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+                      პროექტებზე დაბრუნება
+                    </button>
+                  )}
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => setSelectedItem(null)}
+                  onClick={() => {
+                    setSelectedItem(null);
+                    setSelectedProject(null);
+                  }}
                   aria-label="პორტფოლიოს ფანჯრის დახურვა"
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/[0.12] bg-ink/[0.06] text-ink/65 backdrop-blur-xl transition-all hover:rotate-90 hover:border-ink/25 hover:bg-ink/[0.12] hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:h-11 sm:w-11"
                 >
@@ -176,59 +218,138 @@ export function Portfolio() {
               </header>
 
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:p-6 lg:p-8">
-                <div className="relative mx-auto w-full">
-                  <div
-                    className={`grid gap-4 sm:gap-5 ${
-                      selectedItem.gallery.length === 1 ? 'mx-auto max-w-4xl' : 'sm:grid-cols-2'
-                    }`}
-                  >
-                    {selectedItem.gallery.map((image, imageIndex) => (
-                      <figure
-                        key={`${image}-${imageIndex}`}
-                        className={`relative isolate flex items-center justify-center overflow-hidden rounded-[18px] border border-ink/[0.12] bg-ink/[0.035] shadow-[0_24px_70px_-36px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.18)] sm:rounded-[24px] ${
-                          selectedItem.gallery.length === 1 ? 'min-h-[260px]' : ''
-                        }`}
-                      >
-                        <div
-                          aria-hidden="true"
-                          className="absolute inset-0 scale-110 bg-cover bg-center opacity-20 blur-2xl"
-                          style={{ backgroundImage: `url(${image})` }}
-                        />
-                        <div
-                          aria-hidden="true"
-                          className="absolute inset-0 bg-gradient-to-b from-[#050916]/20 via-[#050916]/35 to-[#050916]/60"
-                        />
-                        <img
-                          src={image}
-                          alt={`${selectedItem.title} — ნამუშევარი ${imageIndex + 1}`}
-                          className={`relative z-10 w-full ${
-                            selectedItem.gallery.length === 1
-                              ? 'max-h-[60vh] object-contain'
-                              : 'aspect-[4/3] h-full object-cover'
-                          }`}
-                        />
-                      </figure>
-                    ))}
+                {selectedItem.projects && !selectedProject ? (
+                  <ul className="mx-auto grid w-full max-w-[640px] grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+                    {Array.from({ length: 6 }, (_, projectIndex) => {
+                      const project = selectedItem.projects?.[projectIndex];
+
+                      if (!project) {
+                        return (
+                          <li
+                            key={`project-placeholder-${projectIndex}`}
+                            className="flex aspect-square flex-col items-center justify-center rounded-[18px] border border-dashed border-ink/[0.13] bg-ink/[0.025] text-center backdrop-blur-xl sm:rounded-[24px]"
+                          >
+                            <span className="text-2xl font-semibold tabular-nums text-ink/15 sm:text-3xl">
+                              {String(projectIndex + 1).padStart(2, '0')}
+                            </span>
+                            <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-ink/25 sm:text-[10px]">
+                              მალე
+                            </span>
+                          </li>
+                        );
+                      }
+
+                      return (
+                        <motion.li
+                          key={project.id}
+                          initial={{ opacity: 0, y: 18 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.38,
+                            delay: projectIndex * 0.06,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setSelectedProject(project)}
+                            aria-label={`${project.title} პროექტის გახსნა`}
+                            className="group relative block aspect-square w-full overflow-hidden rounded-[18px] border border-ink/[0.14] bg-ink/[0.04] text-left shadow-[0_22px_55px_-32px_rgba(0,0,0,0.75)] transition-all duration-300 hover:-translate-y-1 hover:border-accent/45 hover:shadow-[0_28px_65px_-32px_rgba(93,110,255,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:rounded-[24px]"
+                          >
+                            <img
+                              src={project.cover}
+                              alt=""
+                              loading="lazy"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
+                            />
+                            <span
+                              aria-hidden="true"
+                              className="absolute inset-0 bg-gradient-to-t from-[#050814]/90 via-[#050814]/12 to-transparent"
+                            />
+                            <span className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5">
+                              <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-white/60 sm:text-[10px]">
+                                პროექტი
+                              </span>
+                              <span className="mt-1 block text-lg font-bold uppercase tracking-[0.06em] text-white sm:text-2xl">
+                                {project.title}
+                              </span>
+                            </span>
+                          </button>
+                        </motion.li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <div className="relative mx-auto w-full">
+                    <div
+                      className={`grid ${
+                        activeGalleryLayout === 'long-form'
+                          ? 'w-full gap-2 sm:gap-3'
+                          : activeGallery.length === 1
+                            ? 'mx-auto max-w-4xl gap-4 sm:gap-5'
+                            : 'gap-4 sm:grid-cols-2 sm:gap-5'
+                      }`}
+                    >
+                      {activeGallery.map((image, imageIndex) => (
+                        <figure
+                          key={`${image}-${imageIndex}`}
+                          className={`relative isolate flex justify-center overflow-hidden rounded-[18px] border border-ink/[0.12] bg-ink/[0.035] shadow-[0_24px_70px_-36px_rgba(0,0,0,0.65),inset_0_1px_0_rgba(255,255,255,0.18)] sm:rounded-[24px] ${
+                            activeGalleryLayout === 'long-form'
+                              ? 'items-start'
+                              : 'items-center'
+                          } ${activeGallery.length === 1 ? 'min-h-[260px]' : ''}`}
+                        >
+                          {activeGalleryLayout !== 'long-form' && (
+                            <div
+                              aria-hidden="true"
+                              className="absolute inset-0 scale-110 bg-cover bg-center opacity-20 blur-2xl"
+                              style={{ backgroundImage: `url(${image})` }}
+                            />
+                          )}
+                          {activeGalleryLayout !== 'long-form' && (
+                            <div
+                              aria-hidden="true"
+                              className="absolute inset-0 bg-gradient-to-b from-[#050916]/20 via-[#050916]/35 to-[#050916]/60"
+                            />
+                          )}
+                          <img
+                            src={image}
+                            alt={`${selectedProject?.title ?? selectedItem.title} — ნამუშევარი ${imageIndex + 1}`}
+                            className={`relative z-10 w-full ${
+                              activeGalleryLayout === 'long-form'
+                                ? 'h-auto object-contain'
+                                : activeGallery.length === 1
+                                  ? 'max-h-[60vh] object-contain'
+                                  : 'aspect-[4/3] h-full object-cover'
+                            }`}
+                          />
+                        </figure>
+                      ))}
+                    </div>
+
+                    {!selectedProject && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => moveCategory(-1)}
+                          aria-label="წინა პორტფოლიოს კატეგორია"
+                          className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:-translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:left-4 sm:h-12 sm:w-12"
+                        >
+                          <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => moveCategory(1)}
+                          aria-label="შემდეგი პორტფოლიოს კატეგორია"
+                          className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:right-4 sm:h-12 sm:w-12"
+                        >
+                          <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+                        </button>
+                      </>
+                    )}
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => moveCategory(-1)}
-                    aria-label="წინა პორტფოლიოს კატეგორია"
-                    className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:-translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:left-4 sm:h-12 sm:w-12"
-                  >
-                    <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => moveCategory(1)}
-                    aria-label="შემდეგი პორტფოლიოს კატეგორია"
-                    className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-[#090f20]/75 text-white shadow-xl backdrop-blur-xl transition-all hover:translate-x-1 hover:-translate-y-1/2 hover:border-accent/70 hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:right-4 sm:h-12 sm:w-12"
-                  >
-                    <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                </div>
+                )}
               </div>
 
               <footer className="relative flex shrink-0 items-center justify-between gap-4 border-t border-ink/[0.09] px-5 py-3 sm:px-8 sm:py-4">
