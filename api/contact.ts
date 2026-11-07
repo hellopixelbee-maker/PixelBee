@@ -22,6 +22,11 @@ type ApiResponse = {
   json: (body: unknown) => void;
 };
 
+type DeliveryResult = {
+  ok: boolean;
+  status?: number;
+};
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function parseRequestBody(body: unknown): Record<string, unknown> | null {
@@ -102,6 +107,84 @@ function validatePayload(payload: ContactPayload) {
   return errors;
 }
 
+async function saveContactToGoogleSheets(
+  webhookUrl: string,
+  webhookSecret: string,
+  payload: ContactPayload,
+  submittedAtIso: string,
+): Promise<DeliveryResult> {
+  try {
+    const sheetsResponse = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: webhookSecret,
+        submittedAt: submittedAtIso,
+        fullName: payload.fullName,
+        company: payload.company,
+        channel: payload.channel,
+        contact: payload.contact,
+        message: payload.message,
+      }),
+      redirect: 'follow',
+    });
+
+    if (!sheetsResponse.ok) {
+      return { ok: false, status: sheetsResponse.status };
+    }
+
+    const responseBody = (await sheetsResponse.json()) as { ok?: unknown };
+    return { ok: responseBody?.ok === true };
+  } catch {
+    return { ok: false };
+  }
+}
+
+async function sendContactEmail(
+  resendApiKey: string,
+  contactToEmail: string,
+  contactFromEmail: string,
+  payload: ContactPayload,
+  submittedAt: string,
+): Promise<DeliveryResult> {
+  const channelLabels: Record<ContactChannel, string> = {
+    phone: 'ტელეფონი',
+    whatsapp: 'WhatsApp',
+    email: 'ელფოსტა',
+  };
+  const emailText = [
+    'ახალი მოთხოვნა Pixel Bee-ის საიტიდან',
+    '',
+    `სახელი და გვარი: ${payload.fullName}`,
+    `კომპანია/ბრენდი: ${payload.company}`,
+    `საკომუნიკაციო არხი: ${channelLabels[payload.channel as ContactChannel]}`,
+    `საკონტაქტო ინფორმაცია: ${payload.contact}`,
+    `დამატებითი შეტყობინება: ${payload.message || 'არ არის მითითებული'}`,
+    `გაგზავნის თარიღი და დრო: ${submittedAt}`,
+  ].join('\n');
+
+  try {
+    const resendResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: contactFromEmail,
+        to: [contactToEmail],
+        subject: `ახალი მოთხოვნა Pixel Bee-ის საიტიდან — ${payload.company}`,
+        text: emailText,
+        ...(payload.channel === 'email' ? { reply_to: payload.contact } : {}),
+      }),
+    });
+
+    return { ok: resendResponse.ok, status: resendResponse.status };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export default async function handler(request: ApiRequest, response: ApiResponse) {
   response.setHeader('Cache-Control', 'no-store');
 
@@ -130,62 +213,78 @@ export default async function handler(request: ApiRequest, response: ApiResponse
     return;
   }
 
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const contactToEmail = process.env.CONTACT_TO_EMAIL;
-  const contactFromEmail = process.env.CONTACT_FROM_EMAIL;
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
+  const contactToEmail = process.env.CONTACT_TO_EMAIL?.trim();
+  const contactFromEmail = process.env.CONTACT_FROM_EMAIL?.trim();
+  const sheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim();
+  const sheetsWebhookSecret = process.env.GOOGLE_SHEETS_WEBHOOK_SECRET?.trim();
+  const emailConfigValues = [resendApiKey, contactToEmail, contactFromEmail];
+  const hasCompleteEmailConfig = emailConfigValues.every(Boolean);
+  const hasPartialEmailConfig = emailConfigValues.some(Boolean) && !hasCompleteEmailConfig;
+  const hasCompleteSheetsConfig = Boolean(sheetsWebhookUrl && sheetsWebhookSecret);
+  const hasPartialSheetsConfig = Boolean(sheetsWebhookUrl || sheetsWebhookSecret) && !hasCompleteSheetsConfig;
 
-  if (!resendApiKey || !contactToEmail || !contactFromEmail) {
-    console.error('Contact email environment variables are not configured.');
+  if (hasPartialEmailConfig || hasPartialSheetsConfig) {
+    console.error('Contact delivery environment variables are only partially configured.');
     response.status(503).json({ error: 'Contact service is not configured.' });
     return;
   }
 
-  const channelLabels: Record<ContactChannel, string> = {
-    phone: 'ტელეფონი',
-    whatsapp: 'WhatsApp',
-    email: 'ელფოსტა',
-  };
+  if (!hasCompleteEmailConfig && !hasCompleteSheetsConfig) {
+    console.error('No contact delivery service is configured.');
+    response.status(503).json({ error: 'Contact service is not configured.' });
+    return;
+  }
+
+  const submittedAtDate = new Date();
+  const submittedAtIso = submittedAtDate.toISOString();
   const submittedAt = new Intl.DateTimeFormat('ka-GE', {
     dateStyle: 'medium',
     timeStyle: 'medium',
     timeZone: 'Asia/Tbilisi',
-  }).format(new Date());
-  const emailText = [
-    'ახალი მოთხოვნა Pixel Bee-ის საიტიდან',
-    '',
-    `სახელი და გვარი: ${payload.fullName}`,
-    `კომპანია/ბრენდი: ${payload.company}`,
-    `საკომუნიკაციო არხი: ${channelLabels[payload.channel as ContactChannel]}`,
-    `საკონტაქტო ინფორმაცია: ${payload.contact}`,
-    `დამატებითი შეტყობინება: ${payload.message || 'არ არის მითითებული'}`,
-    `გაგზავნის თარიღი და დრო: ${submittedAt}`,
-  ].join('\n');
+  }).format(submittedAtDate);
 
-  try {
-    const resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: contactFromEmail,
-        to: [contactToEmail],
-        subject: `ახალი მოთხოვნა Pixel Bee-ის საიტიდან — ${payload.company}`,
-        text: emailText,
-        ...(payload.channel === 'email' ? { reply_to: payload.contact } : {}),
-      }),
-    });
+  // Google Sheets is the durable contact log. If it is configured, only report
+  // success after the row has actually been saved.
+  if (hasCompleteSheetsConfig) {
+    const sheetsResult = await saveContactToGoogleSheets(
+      sheetsWebhookUrl as string,
+      sheetsWebhookSecret as string,
+      payload,
+      submittedAtIso,
+    );
 
-    if (!resendResponse.ok) {
-      console.error(`Resend rejected the contact email with status ${resendResponse.status}.`);
-      response.status(502).json({ error: 'Email delivery failed.' });
+    if (!sheetsResult.ok) {
+      console.error(
+        `Google Sheets contact delivery failed${sheetsResult.status ? ` with status ${sheetsResult.status}` : ''}.`,
+      );
+      response.status(502).json({ error: 'Google Sheets delivery failed.' });
       return;
     }
-
-    response.status(200).json({ ok: true });
-  } catch (error) {
-    console.error('Contact email delivery failed.', error);
-    response.status(502).json({ error: 'Email delivery failed.' });
   }
+
+  // Email stays as the instant notification channel. If Sheets already stored
+  // the request, an email outage must not make the visitor submit a duplicate.
+  if (hasCompleteEmailConfig) {
+    const emailResult = await sendContactEmail(
+      resendApiKey as string,
+      contactToEmail as string,
+      contactFromEmail as string,
+      payload,
+      submittedAt,
+    );
+
+    if (!emailResult.ok) {
+      console.error(
+        `Contact email delivery failed${emailResult.status ? ` with status ${emailResult.status}` : ''}.`,
+      );
+
+      if (!hasCompleteSheetsConfig) {
+        response.status(502).json({ error: 'Email delivery failed.' });
+        return;
+      }
+    }
+  }
+
+  response.status(200).json({ ok: true });
 }
